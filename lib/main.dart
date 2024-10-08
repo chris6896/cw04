@@ -21,6 +21,7 @@ class TaskList extends StatefulWidget {
 class _TaskListScreenState extends State<TaskList> {
   List<Map<String, dynamic>> tasks = [];
   TextEditingController taskController = TextEditingController();
+  
   void addTask() {
     if (taskController.text.isNotEmpty) {
       setState(() {
@@ -32,6 +33,7 @@ class _TaskListScreenState extends State<TaskList> {
       taskController.clear();
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +50,7 @@ class _TaskListScreenState extends State<TaskList> {
                   child: TextField(
                     controller: taskController,
                     decoration: InputDecoration(
-                      labelText: "Enter Task".
+                      labelText: "Enter Task",
                     ),
                   ),
                 ),
@@ -60,18 +62,39 @@ class _TaskListScreenState extends State<TaskList> {
             ),
           ),
           Expanded(
-            child: tasks.isEmpty
-                ? Center(child: Text("No Tasks"))
-                : ListView.builder(
-                  itemCount: tasks.length,
-                  itemBuilder: (context, index){
-                    return ListTitle(
-                      title: Text(tasks[index]['name']),
-                    );
-                  },
-                ),
-          )
-        ]
+            child: ListView.builder(
+              itemCount: tasks.length,
+              itemBuilder: (context, index){
+                return ListTile(
+                  leading: Checkbox(
+                    value: tasks[index]['isCompleted'],
+                    onChanged: (bool? value){
+                      setState(() {
+                        tasks[index]['isCompleted'] = value!;
+                      });
+                    },
+                  ),
+                  title: Text(
+                    tasks[index]['name'],
+                    style: TextStyle(
+                      decoration: tasks[index]['isCompleted']
+                          ? TextDecoration.lineThrough
+                          : null,
+                    ),
+                  ),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: (){
+                      setState(() {
+                        tasks.removeAt(index);
+                      });
+                    },
+                  ),
+                );
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
